@@ -49,23 +49,15 @@ const Decoder = () => {
     });
 
     const handleEncode = async () => {
-        if (!password || !encoded) {
-            setErrorEncoded({password: !password, encoded: !encoded});
-            alert(`Please input password and message!`)
-        } else {
-            const result = await encodeMutation.mutateAsync({message: encoded, password});
-            setEncoded(result);
-        }
+        setErrorEncoded({password: !password, encoded: !encoded});
+        const result = await encodeMutation.mutateAsync({message: encoded, password});
+        setEncoded(result);
     };
 
     const handleDecode = async () => {
-        if (!password || !encoded) {
-            setErrorDecoded({password: !password, decoded: !decoded});
-            alert(`Please input password and message!`)
-        } else {
-            const result = await decodeMutation.mutateAsync({message: decoded, password});
-            setDecoded(result);
-        }
+        setErrorDecoded({password: !password, decoded: !decoded});
+        const result = await decodeMutation.mutateAsync({message: decoded, password});
+        setDecoded(result);
     };
 
     return (
