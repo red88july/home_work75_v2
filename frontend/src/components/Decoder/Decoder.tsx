@@ -1,7 +1,7 @@
 'use client';
 import React, {useState} from 'react';
 import {useMutation} from "@tanstack/react-query";
-import {Encryption} from "@/types";
+import {DecodedFieldError, EncodedFieldError, Encryption} from "@/types";
 import axiosApi from "@/axiosApi";
 import {Button, CircularProgress, Grid, TextField, Typography} from "@mui/material";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
@@ -13,6 +13,17 @@ const Decoder = () => {
     const [password, setPassword] = useState<string>('');
     const [loadingEncode, isLoadingEncode] = useState(false);
     const [loadingDecode, isLoadingDecode] = useState(false);
+
+    const [errorEncoded, setErrorEncoded] = useState<EncodedFieldError>({
+        password: false,
+        encoded: false,
+    });
+
+    const [errorDecoded, setErrorDecoded] = useState<DecodedFieldError>({
+        password: false,
+        decoded: false,
+    });
+
 
     const encodeMutation = useMutation({
         mutationFn: async (encode: Encryption) => {
@@ -32,6 +43,7 @@ const Decoder = () => {
             try {
                 const response = await axiosApi.post('/decode', decode);
                 return response.data.decoded;
+
             } finally {
                 isLoadingDecode(false);
             }
@@ -39,13 +51,25 @@ const Decoder = () => {
     });
 
     const handleEncode = async () => {
-        const result = await encodeMutation.mutateAsync({message: encoded, password});
-        setEncoded(result);
+        if (!password || !encoded) {
+            setErrorEncoded({password: !password, encoded: !encoded});
+            alert(`Please input password and message!`)
+        } else {
+            const result = await encodeMutation.mutateAsync({message: encoded, password});
+            setEncoded(result);
+        }
     };
 
     const handleDecode = async () => {
-        const result = await decodeMutation.mutateAsync({message: decoded, password});
-        setDecoded(result);
+
+        if (!password || !encoded) {
+            setErrorDecoded({password: !password, decoded: !decoded});
+            alert(`Please input password and message!`)
+        } else {
+            const result = await decodeMutation.mutateAsync({message: decoded, password});
+            setDecoded(result);
+        }
+
     };
 
     return (
@@ -59,6 +83,8 @@ const Decoder = () => {
                 <Grid item xs={6}>
                     <TextField
                         value={encoded}
+                        error={errorEncoded.encoded}
+                        sx={{borderColor: !errorEncoded.encoded ? 'green' : 'initial'}}
                         onChange={(e) => setEncoded(e.target.value)}/>
                 </Grid>
             </Grid>
@@ -70,7 +96,9 @@ const Decoder = () => {
                 </Grid>
                 <Grid item>
                     <TextField
+                        id="encodedField"
                         value={password}
+                        error={errorEncoded.password || errorDecoded.password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Grid>
@@ -103,6 +131,7 @@ const Decoder = () => {
                 <Grid item xs={6}>
                     <TextField
                         value={decoded}
+                        error={errorDecoded.decoded}
                         onChange={(e) => setDecoded(e.target.value)}/>
                 </Grid>
             </Grid>
