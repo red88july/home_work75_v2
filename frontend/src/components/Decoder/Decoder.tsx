@@ -1,9 +1,9 @@
 'use client';
-import React, {useState} from 'react';
-import {useMutation} from "@tanstack/react-query";
-import {DecodedFieldError, EncodedFieldError, Encryption} from "@/types";
 import axiosApi from "@/axiosApi";
+import {useMutation} from "@tanstack/react-query";
+import React, {useState} from 'react';
 import {Button, CircularProgress, Grid, TextField, Typography} from "@mui/material";
+import {DecodedFieldError, EncodedFieldError, Encryption} from "@/types";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 
@@ -24,7 +24,6 @@ const Decoder = () => {
         decoded: false,
     });
 
-
     const encodeMutation = useMutation({
         mutationFn: async (encode: Encryption) => {
             isLoadingEncode(true);
@@ -43,7 +42,6 @@ const Decoder = () => {
             try {
                 const response = await axiosApi.post('/decode', decode);
                 return response.data.decoded;
-
             } finally {
                 isLoadingDecode(false);
             }
@@ -61,7 +59,6 @@ const Decoder = () => {
     };
 
     const handleDecode = async () => {
-
         if (!password || !encoded) {
             setErrorDecoded({password: !password, decoded: !decoded});
             alert(`Please input password and message!`)
@@ -69,12 +66,15 @@ const Decoder = () => {
             const result = await decodeMutation.mutateAsync({message: decoded, password});
             setDecoded(result);
         }
-
     };
 
     return (
         <Grid container direction="column" spacing={2}>
-            <Grid item container gap={2} justifyContent="start" alignItems="center">
+            <Grid item
+                  container
+                  gap={2}
+                  justifyContent="start"
+                  alignItems="center">
                 <Grid item>
                     <Typography variant="subtitle1">
                         Encoded Messsage
@@ -88,7 +88,11 @@ const Decoder = () => {
                         onChange={(e) => setEncoded(e.target.value)}/>
                 </Grid>
             </Grid>
-            <Grid item container gap={10} justifyContent="start" alignItems="center">
+            <Grid item
+                  container
+                  gap={10}
+                  justifyContent="start"
+                  alignItems="center">
                 <Grid item>
                     <Typography variant="subtitle1">
                         Password
@@ -122,7 +126,11 @@ const Decoder = () => {
                     </Button>
                 </Grid>
             </Grid>
-            <Grid item gap={2} container justifyContent="start" alignItems="center">
+            <Grid item
+                  gap={2}
+                  container
+                  justifyContent="start"
+                  alignItems="center">
                 <Grid item>
                     <Typography variant="subtitle1">
                         Decoded Messsage
